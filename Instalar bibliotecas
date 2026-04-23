@@ -1,0 +1,2 @@
+# 1. INSTALAR BIBLIOTECAS
+!pip install tensorpac mne scikit-learn
