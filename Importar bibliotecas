@@ -1,0 +1,6 @@
+# 2. IMPORTAR BIBLIOTECAS
+import numpy as np
+import mne
+import os
+import tensorpac
+import sklearn
