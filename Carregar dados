@@ -1,0 +1,13 @@
+# 3. CARREGAR DADOS
+file_path = os.path.expanduser('/content/chb01_01.edf')
+
+print(f"Tentando carregar o arquivo de EEG de: {file_path}")
+
+try:
+    raw = mne.io.read_raw_edf(file_path, preload=True)
+
+    print("\n--- Carregamento Concluído ---")
+    print(raw)
+
+except FileNotFoundError:
+    print("\nERRO: Arquivo não encontrado! Verifique o caminho.")
