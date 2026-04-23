@@ -1,0 +1,133 @@
+# 1. INSTALAR (se necessário)
+!pip install tensorpac mne scikit-learn
+
+# 2. IMPORTAR BIBLIOTECAS
+import numpy as np
+import mne
+import os
+import tensorpac
+import sklearn
+
+# 3. CARREGAR DADOS
+file_path = os.path.expanduser('/content/chb01_01.edf')
+
+print(f"Tentando carregar o arquivo de EEG de: {file_path}")
+
+try:
+    raw = mne.io.read_raw_edf(file_path, preload=True)
+
+    print("\n--- Carregamento Concluído ---")
+    print(raw)
+
+except FileNotFoundError:
+    print("\nERRO: Arquivo não encontrado! Verifique o caminho.")
+
+# 4. PRÉ-PROCESSAMENTO
+def preprocess_eeg(raw):
+    raw_filtered = raw.copy()
+    
+    raw_filtered.notch_filter(freqs=60.0, verbose=False)
+    raw_filtered.filter(l_freq=0.5, h_freq=100.0, verbose=False)
+    
+    return raw_filtered
+
+raw_filtered = preprocess_eeg(raw)
+
+# 5. ÉPOCAS
+import mne
+import numpy as np
+
+# ======================
+# FUNÇÕES
+# ======================
+
+def crop_interval(raw, tmin, tmax):
+    """Recorta um intervalo do sinal sem alterar o original"""
+    return raw.copy().crop(tmin=tmin, tmax=tmax)
+
+
+def create_epochs(raw_segment, duration=5.0):
+    """Divide o sinal em épocas (janelas)"""
+    return mne.make_fixed_length_epochs(
+        raw_segment,
+        duration=duration,
+        preload=True
+    )
+
+
+def get_balanced_pre_interval(t_inicio_crise, t_fim_crise, offset=60):
+    """Cria intervalo ANTES da crise com mesma duração"""
+    duracao = t_fim_crise - t_inicio_crise
+    t_fim_pre = t_inicio_crise - offset
+    t_inicio_pre = t_fim_pre - duracao
+    return t_inicio_pre, t_fim_pre
+
+
+def get_balanced_post_interval(t_inicio_crise, t_fim_crise, offset=10):
+    """Cria intervalo DEPOIS da crise com mesma duração"""
+    duracao = t_fim_crise - t_inicio_crise
+    t_inicio_pos = t_fim_crise + offset
+    t_fim_pos = t_inicio_pos + duracao
+    return t_inicio_pos, t_fim_pos
+
+
+# ======================
+# DEFINIR INTERVALOS
+# ======================
+
+# Intervalo da crise (você define)
+t_inicio_crise = 2996
+t_fim_crise = 3036
+
+# Intervalo antes da crise
+t_inicio_pre, t_fim_pre = get_balanced_pre_interval(
+    t_inicio_crise, t_fim_crise
+)
+
+# Intervalo depois da crise
+t_inicio_pos, t_fim_pos = get_balanced_post_interval(
+    t_inicio_crise, t_fim_crise
+)
+
+print("=== INTERVALOS ===")
+print(f"Pré-crise: {t_inicio_pre} → {t_fim_pre}")
+print(f"Crise:     {t_inicio_crise} → {t_fim_crise}")
+print(f"Pós-crise: {t_inicio_pos} → {t_fim_pos}")
+
+
+# ======================
+# ORGANIZAR INTERVALOS
+# ======================
+
+intervalos = {
+    "pre_crise": (t_inicio_pre, t_fim_pre),
+    "crise": (t_inicio_crise, t_fim_crise),
+    "pos_crise": (t_inicio_pos, t_fim_pos)
+}
+
+
+# ======================
+# PROCESSAMENTO
+# ======================
+
+epochs_dict = {}
+
+for label, (tmin, tmax) in intervalos.items():
+    
+    # Recortar sinal (IMPORTANTE: usar raw_filtered)
+    raw_segment = crop_interval(raw_filtered, tmin, tmax)
+    
+    # Criar épocas
+    epochs = create_epochs(raw_segment)
+    
+    # Salvar
+    epochs_dict[label] = epochs
+
+
+# ======================
+# RESULTADO
+# ======================
+
+print("\n=== RESUMO ===")
+for label in epochs_dict:
+    print(f"{label}: {len(epochs_dict[label])} épocas")
