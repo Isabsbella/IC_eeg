@@ -1,0 +1,10 @@
+# 4. PRÉ-PROCESSAMENTO
+def preprocess_eeg(raw):
+    raw_filtered = raw.copy()
+    
+    raw_filtered.notch_filter(freqs=60.0, verbose=False)
+    raw_filtered.filter(l_freq=0.5, h_freq=100.0, verbose=False)
+    
+    return raw_filtered
+
+raw_filtered = preprocess_eeg(raw)
