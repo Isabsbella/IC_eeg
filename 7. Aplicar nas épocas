@@ -1,0 +1,23 @@
+theta_epochs_dict = {}
+
+fmin, fmax = 4, 8  # banda theta
+
+for label, epochs in epochs_dict.items():
+    
+    data = epochs.get_data()  # (n_epochs, n_channels, n_times)
+    sfreq = epochs.info['sfreq']
+    
+    filtered_data = []
+    
+    for ep in data:
+        filtered_channels = []
+        
+        for ch in ep:
+            filtered = bandpass_filter(ch, sfreq, fmin, fmax)
+            filtered_channels.append(filtered)
+        
+        filtered_data.append(filtered_channels)
+    
+    theta_epochs_dict[label] = np.array(filtered_data)
+
+print("Filtragem theta concluída!")
