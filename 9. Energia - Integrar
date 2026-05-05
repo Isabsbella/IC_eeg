@@ -1,0 +1,12 @@
+def compute_energy(power_data, sfreq):
+    """
+    power_data: (n_channels, n_times)
+    retorna: energia por canal
+    """
+    energies = []
+    
+    for ch_power in power_data:
+        energy = np.sum(ch_power) / sfreq
+        energies.append(energy)
+    
+    return np.array(energies)
