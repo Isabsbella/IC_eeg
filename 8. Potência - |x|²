@@ -1,0 +1,12 @@
+def compute_power(epoch_data):
+    """
+    epoch_data: (n_channels, n_times)
+    retorna: potência por canal ao longo do tempo
+    """
+    power_channels = []
+    
+    for ch in epoch_data:
+        power = ch ** 2  # potência instantânea
+        power_channels.append(power)
+    
+    return np.array(power_channels)
