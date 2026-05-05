@@ -1,0 +1,5 @@
+import matplotlib.pyplot as plt
+
+plt.plot(theta_epochs_dict["crise"][0][0])
+plt.title("Sinal filtrado em theta (4–8 Hz)")
+plt.show()
