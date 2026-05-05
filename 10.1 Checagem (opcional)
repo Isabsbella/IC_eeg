@@ -1,0 +1,14 @@
+import matplotlib.pyplot as plt
+
+# pega uma época e um canal
+ep = theta_epochs_dict["crise"][0][0]  # época 0, canal 0
+
+# potência
+power = ep ** 2
+
+plt.figure()
+plt.plot(power)
+plt.title("Potência (theta) ao longo do tempo")
+plt.xlabel("Tempo (amostras)")
+plt.ylabel("Potência")
+plt.show()
