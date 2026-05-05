@@ -1,0 +1,30 @@
+X_list = []
+y_list = []
+
+for label, data in theta_epochs_dict.items():
+    
+    sfreq = epochs_dict[label].info['sfreq']
+    
+    features = []
+    
+    for ep in data:
+        
+        # PASSO 1: potência
+        power = compute_power(ep)
+        
+        # PASSO 2: energia
+        energy = compute_energy(power, sfreq)
+        
+        features.append(energy)
+    
+    features = np.array(features)  # (n_epochs, n_channels)
+    
+    labels = np.full(features.shape[0], label_map[label])
+    
+    X_list.append(features)
+    y_list.append(labels)
+
+X_theta = np.vstack(X_list)
+y_theta = np.concatenate(y_list)
+
+print("Formato X_theta:", X_theta.shape)
