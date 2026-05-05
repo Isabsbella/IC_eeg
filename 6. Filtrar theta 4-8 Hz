@@ -1,0 +1,16 @@
+import numpy as np
+from scipy.signal import butter, filtfilt
+
+# ======================
+# FILTRO PASSA-BANDA
+# ======================
+
+def bandpass_filter(data, sfreq, fmin, fmax, order=4):
+    nyq = 0.5 * sfreq
+    low = fmin / nyq
+    high = fmax / nyq
+    
+    b, a = butter(order, [low, high], btype='band')
+    filtered = filtfilt(b, a, data)
+    
+    return filtered
