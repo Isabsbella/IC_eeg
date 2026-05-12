@@ -1,0 +1,18 @@
+import matplotlib.pyplot as plt
+
+# separar por classe
+pre = X_theta[y_theta == 0]
+crise = X_theta[y_theta == 1]
+
+# média da energia por época
+pre_mean = pre.mean(axis=1)
+crise_mean = crise.mean(axis=1)
+
+# gráfico
+plt.boxplot([pre_mean, crise_mean])
+
+plt.xticks([1, 2], ["Pré-crise", "Crise"])
+plt.ylabel("Energia Theta")
+plt.title("Comparação da Energia Theta")
+
+plt.show()
