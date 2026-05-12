@@ -1,0 +1,9 @@
+# uma época de cada
+pre_ep = theta_epochs_dict["pre_crise"][0][0]
+crise_ep = theta_epochs_dict["crise"][0][0]
+
+plt.plot(pre_ep**2, label="Pré")
+plt.plot(crise_ep**2, label="Crise")
+plt.legend()
+plt.title("Comparação de potência")
+plt.show()
