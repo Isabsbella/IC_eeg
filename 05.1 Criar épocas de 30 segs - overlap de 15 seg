@@ -13,12 +13,12 @@ def crop_interval(raw, tmin, tmax):
     """Recorta um intervalo do sinal sem alterar o original"""
     return raw.copy().crop(tmin=tmin, tmax=tmax)
 
-
-def create_epochs(raw_segment, duration=30.0):
+def create_epochs(raw_segment, duration=30.0, overlap=15.0):
     """Divide o sinal em épocas de duração fixa"""
     return mne.make_fixed_length_epochs(
         raw_segment,
         duration=duration,
+        overlap=overlap,
         preload=True
     )
 
@@ -64,8 +64,12 @@ for label, (tmin, tmax) in intervalos.items():
     # Recorta o intervalo do sinal filtrado
     raw_segment = crop_interval(raw_filtered, tmin, tmax)
 
-    # Cria épocas de 30 segundos
-    epochs = create_epochs(raw_segment, duration=30.0)
+    # Cria épocas de 30 segundos com overlap de 15 segundos
+    epochs = create_epochs(
+        raw_segment,
+        duration=30.0,
+        overlap=15.0
+    )
 
     # Armazena
     epochs_dict[label] = epochs
@@ -86,3 +90,7 @@ for label, epochs in epochs_dict.items():
 for label, epochs in epochs_dict.items():
     print(f"\n{label}")
     print(f"Formato dos dados: {epochs.get_data().shape}")
+
+
+
+
