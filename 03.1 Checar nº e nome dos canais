@@ -1,0 +1,3 @@
+print("Número de canais:", len(raw.ch_names))
+print("Canais:")
+print(raw.ch_names)
