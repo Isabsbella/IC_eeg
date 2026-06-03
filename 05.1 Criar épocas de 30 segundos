@@ -1,0 +1,88 @@
+# ======================
+# IMPORTAR BIBLIOTECAS
+# ======================
+
+import mne
+import numpy as np
+
+# ======================
+# FUNÇÕES
+# ======================
+
+def crop_interval(raw, tmin, tmax):
+    """Recorta um intervalo do sinal sem alterar o original"""
+    return raw.copy().crop(tmin=tmin, tmax=tmax)
+
+
+def create_epochs(raw_segment, duration=30.0):
+    """Divide o sinal em épocas de duração fixa"""
+    return mne.make_fixed_length_epochs(
+        raw_segment,
+        duration=duration,
+        preload=True
+    )
+
+# ======================
+# DEFINIR INTERVALOS
+# ======================
+
+# Período da crise (segundos)
+t_inicio_crise = 2996
+t_fim_crise = 3036
+
+# Pré-pré-crise: 35–65 min antes da crise
+t_inicio_prepre = t_inicio_crise - (65 * 60)
+t_fim_prepre = t_inicio_crise - (35 * 60)
+
+# Pré-crise: 5–35 min antes da crise
+t_inicio_pre = t_inicio_crise - (35 * 60)
+t_fim_pre = t_inicio_crise - (5 * 60)
+
+print("=== INTERVALOS ===")
+print(f"Pré-pré-crise: {t_inicio_prepre} → {t_fim_prepre}")
+print(f"Pré-crise:     {t_inicio_pre} → {t_fim_pre}")
+print(f"Crise:         {t_inicio_crise} → {t_fim_crise}")
+
+# ======================
+# ORGANIZAR INTERVALOS
+# ======================
+
+intervalos = {
+    "prepre_crise": (t_inicio_prepre, t_fim_prepre),
+    "pre_crise": (t_inicio_pre, t_fim_pre),
+    "crise": (t_inicio_crise, t_fim_crise),
+}
+
+# ======================
+# PROCESSAMENTO
+# ======================
+
+epochs_dict = {}
+
+for label, (tmin, tmax) in intervalos.items():
+
+    # Recorta o intervalo do sinal filtrado
+    raw_segment = crop_interval(raw_filtered, tmin, tmax)
+
+    # Cria épocas de 30 segundos
+    epochs = create_epochs(raw_segment, duration=30.0)
+
+    # Armazena
+    epochs_dict[label] = epochs
+
+# ======================
+# RESULTADO
+# ======================
+
+print("\n=== RESUMO ===")
+
+for label, epochs in epochs_dict.items():
+    print(f"{label}: {len(epochs)} épocas")
+
+# ======================
+# VERIFICAÇÃO EXTRA
+# ======================
+
+for label, epochs in epochs_dict.items():
+    print(f"\n{label}")
+    print(f"Formato dos dados: {epochs.get_data().shape}")
