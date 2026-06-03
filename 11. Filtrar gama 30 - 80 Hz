@@ -1,0 +1,21 @@
+# ======================
+# FILTRAGEM GAMA (30–80 Hz)
+# ======================
+
+gamma_epochs_dict = {}
+
+for label, epochs in epochs_dict.items():
+
+    # Copia para não alterar o original
+    epochs_gamma = epochs.copy()
+
+    # Filtra na banda gama
+    epochs_gamma.filter(
+        l_freq=30,
+        h_freq=80,
+        verbose=False
+    )
+
+    gamma_epochs_dict[label] = epochs_gamma
+
+print("Filtragem gama concluída!")
