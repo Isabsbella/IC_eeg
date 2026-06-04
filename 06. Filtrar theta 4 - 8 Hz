@@ -1,0 +1,22 @@
+# ======================
+# FILTRAGEM THETA (4–8 Hz)
+# ======================
+
+theta_epochs_dict = {}
+
+for label, epochs in epochs_dict.items():
+
+    # Faz uma cópia para não alterar os dados originais
+    epochs_theta = epochs.copy()
+
+    # Filtra na banda theta
+    epochs_theta.filter(
+        l_freq=4,
+        h_freq=8,
+        verbose=False
+    )
+
+    # Armazena
+    theta_epochs_dict[label] = epochs_theta
+
+print("Filtragem theta concluída!")
